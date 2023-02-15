@@ -32,7 +32,7 @@ public class SnudownParser {
     let actions: [String: TagAction] = [
         "<p>": [.newBuilder, .allowAppend],
         "</p>": [.popBuilder, .disallowAppend],
-        "<span class=\\\"md-spoiler-text\\\">": [.markIndex],
+        "<span class=\"md-spoiler-text\">": [.markIndex],
         "</span>": [.markIndexAsSpoiler],
         "</a>": [.markIndexAsLink],
         "<pre>": [.markCodeBlock],
@@ -49,12 +49,12 @@ public class SnudownParser {
         "</h5>": [.closeHeader, .disallowAppend],
         "</h6>": [.closeHeader, .disallowAppend],
         "<th>": [.newBuilder, .allowAppend],
-        "<th align=\\\"left\\\">": [.newBuilder, .allowAppend],
-        "<th align=\\\"right\\\">": [.newBuilder, .allowAppend],
+        "<th align=\"left\">": [.newBuilder, .allowAppend],
+        "<th align=\"right\">": [.newBuilder, .allowAppend],
         "</th>": [.closeTableHeader, .disallowAppend],
         "<td>": [.newBuilder, .allowAppend],
-        "<td align=\\\"left\\\">": [.newBuilder, .allowAppend],
-        "<td align=\\\"right\\\">": [.newBuilder, .allowAppend],
+        "<td align=\"left\">": [.newBuilder, .allowAppend],
+        "<td align=\"right\">": [.newBuilder, .allowAppend],
         "</td>": [.closeTableRow, .disallowAppend],
         "<table>": [.newTable],
         "</table>": [.closeTable],
@@ -472,8 +472,8 @@ extension SnudownParser {
                 at += 1
             }
 
-            let startIndex = prop.index(prop.startIndex, offsetBy: 2)
-            let endIndex = prop.index(prop.endIndex, offsetBy: -2)
+            let startIndex = prop.index(prop.startIndex, offsetBy: 1) // Skip "..
+            let endIndex = prop.index(prop.endIndex, offsetBy: -1) // Skip ..."
             let range = startIndex..<endIndex
             props[title] = String(prop[range])
         }
