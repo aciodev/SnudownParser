@@ -156,7 +156,7 @@ public class MarkdownList {
     }
 }
 
-class MarkdownListNode {
+public class MarkdownListNode {
     let attributed: NSMutableAttributedString
     var list: MarkdownList? = nil
 
