@@ -39,4 +39,28 @@ final class SnudownParserTests: XCTestCase {
         XCTAssert(parseResult.uniqueLinks.contains("https://reddit.com"))
         XCTAssert(parseResult.uniqueLinks.contains("https://www.google.com"))
     }
+    
+    /// Test table
+    func testTable() throws {
+        let comprehensiveHtml = """
+                   <div class=\\"md\\"><p>&#x200B;</p>\\n\\n<table><thead>\\n<tr>\\n<th align=\\"left\\">Header 1</th>\\n<th align=\\"left\\">Header 2</th>\\n</tr>\\n</thead><tbody>\\n<tr>\\n<td align=\\"left\\">Key</td>\\n<td align=\\"left\\">Value</td>\\n</tr>\\n</tbody></table>\\n</div>
+                   """
+        
+        let parser = SnudownParserTests.makeParser()
+        let parseResult = parser.parse(html: comprehensiveHtml)
+        let components = parseResult.components
+        
+        XCTAssertEqual(components.count, 2)
+        
+        guard case MarkdownComponent.table(let table) = components[1] else {
+            return
+        }
+        
+        XCTAssertEqual(table.headers.count, 2)
+        XCTAssertEqual(table.rows.count, 1)
+        XCTAssertEqual(table.headers[0].string, "Header 1")
+        XCTAssertEqual(table.headers[1].string, "Header 2")
+        XCTAssertEqual(table.rows[0][0].string, "Key")
+        XCTAssertEqual(table.rows[0][1].string, "Value")
+    }
 }
