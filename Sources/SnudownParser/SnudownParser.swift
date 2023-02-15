@@ -94,7 +94,7 @@ public class SnudownParser {
 
     let config: MarkdownConfig
 
-    init(config: MarkdownConfig) {
+    public init(config: MarkdownConfig) {
         self.config = config
     }
 }

@@ -142,7 +142,7 @@ public struct MarkdownConfig {
 }
 
 public class MarkdownList {
-    enum Kind {
+    public enum Kind {
         case ordered
         case unordered
     }
