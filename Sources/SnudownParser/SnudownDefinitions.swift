@@ -49,18 +49,18 @@ public struct ParseResult {
 }
 
 public struct MarkdownConfig {
-    let fontBoldItalic: NSFont
-    let fontBold: NSFont
-    let fontItalic: NSFont
-    let fontCode: NSFont
-    let fontSuperscript: NSFont
-    let fontDefault: NSFont
-    let fontH1: NSFont
-    let fontH2: NSFont
-    let fontH3: NSFont
-    let fontH4: NSFont
-    let fontH5: NSFont
-    let fontH6: NSFont
+    public let fontBoldItalic: NSFont
+    public let fontBold: NSFont
+    public let fontItalic: NSFont
+    public let fontCode: NSFont
+    public let fontSuperscript: NSFont
+    public let fontDefault: NSFont
+    public let fontH1: NSFont
+    public let fontH2: NSFont
+    public let fontH3: NSFont
+    public let fontH4: NSFont
+    public let fontH5: NSFont
+    public let fontH6: NSFont
 
     public init(fontBoldItalic: NSFont, fontBold: NSFont, fontItalic: NSFont, fontCode: NSFont, fontSuperscript: NSFont, fontDefault: NSFont, fontH1: NSFont, fontH2: NSFont, fontH3: NSFont, fontH4: NSFont, fontH5: NSFont, fontH6: NSFont) {
         self.fontBoldItalic = fontBoldItalic
