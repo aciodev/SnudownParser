@@ -39,9 +39,9 @@ public extension NSAttributedString.Key {
 }
 
 public struct ParseResult {
-    var components = [MarkdownComponent]()
-    var uniqueLinks = Set<String>()
-    var linkOrder = [String]()
+    public var components = [MarkdownComponent]()
+    public var uniqueLinks = Set<String>()
+    public var linkOrder = [String]()
     
     public init() {
         
@@ -88,8 +88,8 @@ public enum MarkdownComponent {
 }
 
 public struct MarkdownTable {
-    var headers = [NSAttributedString]()
-    var rows = [[NSAttributedString]]()
+    public var headers = [NSAttributedString]()
+    public var rows = [[NSAttributedString]]()
 }
 
 public class MarkdownList {
@@ -98,8 +98,8 @@ public class MarkdownList {
         case unordered
     }
 
-    let kind: Kind
-    var children: [MarkdownListNode]
+    public let kind: Kind
+    public var children: [MarkdownListNode]
 
     public init(kind: Kind, children: [MarkdownListNode]) {
         self.kind = kind
@@ -108,8 +108,8 @@ public class MarkdownList {
 }
 
 public class MarkdownListNode {
-    let attributed: NSMutableAttributedString
-    var list: MarkdownList?
+    public let attributed: NSMutableAttributedString
+    public var list: MarkdownList?
 
     public init(attributed: NSMutableAttributedString, list: MarkdownList? = nil) {
         self.attributed = attributed
