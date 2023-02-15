@@ -128,6 +128,9 @@ extension SnudownParser {
                 } else if let styleFlag = styles[htmlTag] {
                     handleStyle(at: &i, len: len, chars: chars, styleFlag: styleFlag, parseTemp: &parseTemp)
                 }
+            case "\n":
+                i += 1
+                continue // Do not append new lines
             default:
                 handleAppend(at: &i, len: len, chars: chars, parseTemp: &parseTemp)
             }

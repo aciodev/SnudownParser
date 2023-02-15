@@ -63,4 +63,27 @@ final class SnudownParserTests: XCTestCase {
         XCTAssertEqual(table.rows[0][0].string, "Key")
         XCTAssertEqual(table.rows[0][1].string, "Value")
     }
+    
+    /// Test embedded list elements
+    func testLists() throws {
+        let listHtml = """
+                   <div class=\"md\"><ol>\n<li>Element one\n\n<ol>\n<li>Sub-element <a href=\"https://reddit.com\">one</a></li>\n</ol></li>\n<li><strong>Element</strong> two\n\n<ol>\n<li>My <code>code</code></li>\n</ol></li>\n</ol>\n</div>
+                   """
+        
+        let parser = SnudownParserTests.makeParser()
+        let parseResult = parser.parse(html: listHtml)
+        let components = parseResult.components
+        
+        XCTAssertEqual(components.count, 1)
+        
+        guard case MarkdownComponent.list(let list) = components[0] else {
+            return
+        }
+        
+        XCTAssertEqual(list.children.count, 2)
+        XCTAssertEqual(list.children[0].attributed.string, "Element one")
+        XCTAssertEqual(list.children[0].list?.children[0].attributed.string, "Sub-element one")
+        XCTAssertEqual(list.children[1].attributed.string, "Element two")
+        XCTAssertEqual(list.children[1].list?.children[0].attributed.string, "My code")
+    }
 }
