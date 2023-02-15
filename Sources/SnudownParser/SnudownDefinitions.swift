@@ -26,15 +26,98 @@
 
 import Cocoa
 
-extension NSAttributedString.Key {
-    public static var spoiler: NSAttributedString.Key {
+// MARK: - Externally visible properties
+
+public extension NSAttributedString.Key {
+    static var spoiler: NSAttributedString.Key {
         NSAttributedString.Key("SDSpoiler") // Stores an integer (id)
     }
 
-    public static var quote: NSAttributedString.Key {
+    static var quote: NSAttributedString.Key {
         NSAttributedString.Key("SDQuote") // Stores in integer (depth)
     }
 }
+
+public struct ParseResult {
+    var components = [MarkdownComponent]()
+    var uniqueLinks = Set<String>()
+    var linkOrder = [String]()
+    
+    public init() {
+        
+    }
+}
+
+public struct MarkdownConfig {
+    let fontBoldItalic: NSFont
+    let fontBold: NSFont
+    let fontItalic: NSFont
+    let fontCode: NSFont
+    let fontSuperscript: NSFont
+    let fontDefault: NSFont
+    let fontH1: NSFont
+    let fontH2: NSFont
+    let fontH3: NSFont
+    let fontH4: NSFont
+    let fontH5: NSFont
+    let fontH6: NSFont
+
+    public init(fontBoldItalic: NSFont, fontBold: NSFont, fontItalic: NSFont, fontCode: NSFont, fontSuperscript: NSFont, fontDefault: NSFont, fontH1: NSFont, fontH2: NSFont, fontH3: NSFont, fontH4: NSFont, fontH5: NSFont, fontH6: NSFont) {
+        self.fontBoldItalic = fontBoldItalic
+        self.fontBold = fontBold
+        self.fontItalic = fontItalic
+        self.fontCode = fontCode
+        self.fontSuperscript = fontSuperscript
+        self.fontDefault = fontDefault
+        self.fontH1 = fontH1
+        self.fontH2 = fontH2
+        self.fontH3 = fontH3
+        self.fontH4 = fontH4
+        self.fontH5 = fontH5
+        self.fontH6 = fontH6
+    }
+}
+
+public enum MarkdownComponent {
+    case text(NSAttributedString)
+    case code(String)
+    case image(URL, CGSize)
+    case table(MarkdownTable)
+    case list(MarkdownList)
+    case blockquote([NSAttributedString], Int)
+}
+
+public struct MarkdownTable {
+    var headers = [NSAttributedString]()
+    var rows = [[NSAttributedString]]()
+}
+
+public class MarkdownList {
+    public enum Kind {
+        case ordered
+        case unordered
+    }
+
+    let kind: Kind
+    var children: [MarkdownListNode]
+
+    public init(kind: Kind, children: [MarkdownListNode]) {
+        self.kind = kind
+        self.children = children
+    }
+}
+
+public class MarkdownListNode {
+    let attributed: NSMutableAttributedString
+    var list: MarkdownList?
+
+    public init(attributed: NSMutableAttributedString, list: MarkdownList? = nil) {
+        self.attributed = attributed
+        self.list = list
+    }
+}
+
+// MARK: - Internal use only
 
 struct ParseTemp {
     // Temp data
@@ -56,30 +139,6 @@ struct ParseTemp {
     var linkRanges = [LinkRange]()
     // Final parse data
     var result = ParseResult()
-}
-
-public struct ParseResult {
-    var components = [MarkdownComponent]()
-    var uniqueLinks = Set<String>()
-    var linkOrder = [String]()
-    
-    public init() {
-        
-    }
-}
-
-enum MarkdownComponent {
-    case text(NSAttributedString)
-    case code(String)
-    case image(URL, CGSize)
-    case table(MarkdownTable)
-    case list(MarkdownList)
-    case blockquote([NSAttributedString], Int)
-}
-
-struct MarkdownTable {
-    var headers = [NSAttributedString]()
-    var rows = [[NSAttributedString]]()
 }
 
 struct TagAction: OptionSet {
@@ -128,59 +187,4 @@ struct StyleRange {
 struct LinkRange {
     let link: String
     let range: NSRange
-}
-
-public struct MarkdownConfig {
-    let fontBoldItalic: NSFont
-    let fontBold: NSFont
-    let fontItalic: NSFont
-    let fontCode: NSFont
-    let fontSuperscript: NSFont
-    let fontDefault: NSFont
-    let fontH1: NSFont
-    let fontH2: NSFont
-    let fontH3: NSFont
-    let fontH4: NSFont
-    let fontH5: NSFont
-    let fontH6: NSFont
-    
-    public init(fontBoldItalic: NSFont, fontBold: NSFont, fontItalic: NSFont, fontCode: NSFont, fontSuperscript: NSFont, fontDefault: NSFont, fontH1: NSFont, fontH2: NSFont, fontH3: NSFont, fontH4: NSFont, fontH5: NSFont, fontH6: NSFont) {
-        self.fontBoldItalic = fontBoldItalic
-        self.fontBold = fontBold
-        self.fontItalic = fontItalic
-        self.fontCode = fontCode
-        self.fontSuperscript = fontSuperscript
-        self.fontDefault = fontDefault
-        self.fontH1 = fontH1
-        self.fontH2 = fontH2
-        self.fontH3 = fontH3
-        self.fontH4 = fontH4
-        self.fontH5 = fontH5
-        self.fontH6 = fontH6
-    }
-}
-
-public class MarkdownList {
-    public enum Kind {
-        case ordered
-        case unordered
-    }
-
-    let kind: Kind
-    var children: [MarkdownListNode]
-
-    public init(kind: Kind, children: [MarkdownListNode]) {
-        self.kind = kind
-        self.children = children
-    }
-}
-
-public class MarkdownListNode {
-    let attributed: NSMutableAttributedString
-    var list: MarkdownList?
-
-    public init(attributed: NSMutableAttributedString, list: MarkdownList? = nil) {
-        self.attributed = attributed
-        self.list = list
-    }
 }
