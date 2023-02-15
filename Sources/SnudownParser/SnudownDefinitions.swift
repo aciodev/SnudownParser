@@ -139,6 +139,21 @@ public struct MarkdownConfig {
     let fontH4: NSFont
     let fontH5: NSFont
     let fontH6: NSFont
+    
+    public init(fontBoldItalic: NSFont, fontBold: NSFont, fontItalic: NSFont, fontCode: NSFont, fontSuperscript: NSFont, fontDefault: NSFont, fontH1: NSFont, fontH2: NSFont, fontH3: NSFont, fontH4: NSFont, fontH5: NSFont, fontH6: NSFont) {
+        self.fontBoldItalic = fontBoldItalic
+        self.fontBold = fontBold
+        self.fontItalic = fontItalic
+        self.fontCode = fontCode
+        self.fontSuperscript = fontSuperscript
+        self.fontDefault = fontDefault
+        self.fontH1 = fontH1
+        self.fontH2 = fontH2
+        self.fontH3 = fontH3
+        self.fontH4 = fontH4
+        self.fontH5 = fontH5
+        self.fontH6 = fontH6
+    }
 }
 
 public class MarkdownList {
@@ -150,7 +165,7 @@ public class MarkdownList {
     let kind: Kind
     var children: [MarkdownListNode]
 
-    init(kind: Kind, children: [MarkdownListNode]) {
+    public init(kind: Kind, children: [MarkdownListNode]) {
         self.kind = kind
         self.children = children
     }
@@ -160,7 +175,7 @@ public class MarkdownListNode {
     let attributed: NSMutableAttributedString
     var list: MarkdownList? = nil
 
-    init(attributed: NSMutableAttributedString) {
+    public init(attributed: NSMutableAttributedString) {
         self.attributed = attributed
     }
 }
