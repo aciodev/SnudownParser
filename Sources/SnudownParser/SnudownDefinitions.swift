@@ -58,10 +58,14 @@ struct ParseTemp {
     var result = ParseResult()
 }
 
-struct ParseResult {
+public struct ParseResult {
     var components = [MarkdownComponent]()
     var uniqueLinks = Set<String>()
     var linkOrder = [String]()
+    
+    public init() {
+        
+    }
 }
 
 enum MarkdownComponent {
@@ -173,9 +177,10 @@ public class MarkdownList {
 
 public class MarkdownListNode {
     let attributed: NSMutableAttributedString
-    var list: MarkdownList? = nil
+    var list: MarkdownList?
 
     public init(attributed: NSMutableAttributedString) {
         self.attributed = attributed
+        self.list = nil
     }
 }
