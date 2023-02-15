@@ -103,7 +103,7 @@ public class SnudownParser {
 
 extension SnudownParser {
     /// Parse html
-    func parse(html: String) -> ParseResult {
+    public func parse(html: String) -> ParseResult {
         let chars = Array<Character>(html)
         var i = 0
         let len = chars.count

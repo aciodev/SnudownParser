@@ -179,8 +179,8 @@ public class MarkdownListNode {
     let attributed: NSMutableAttributedString
     var list: MarkdownList?
 
-    public init(attributed: NSMutableAttributedString) {
+    public init(attributed: NSMutableAttributedString, list: MarkdownList? = nil) {
         self.attributed = attributed
-        self.list = nil
+        self.list = list
     }
 }
