@@ -126,7 +126,7 @@ struct LinkRange {
     let range: NSRange
 }
 
-struct MarkdownConfig {
+public struct MarkdownConfig {
     let fontBoldItalic: NSFont
     let fontBold: NSFont
     let fontItalic: NSFont
@@ -141,7 +141,7 @@ struct MarkdownConfig {
     let fontH6: NSFont
 }
 
-class MarkdownList {
+public class MarkdownList {
     enum Kind {
         case ordered
         case unordered
