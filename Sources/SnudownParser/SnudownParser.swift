@@ -292,27 +292,7 @@ extension SnudownParser {
             parseTemp.blockQuoteDepth -= 1
         }
     }
-
-    /// Pops the current builder as a quote block
-    private func popCurrentAsBlockQuoteElement(parseTemp: inout ParseTemp) {
-        guard parseTemp.blockQuoteFragments.count > 0 else {
-            return
-        }
-
-        parseTemp.result.components.append(.blockquote(parseTemp.blockQuoteFragments, parseTemp.blockQuoteDepth))
-    }
-
-    /// Pops the current as a list tree
-    private func popCurrentAsListElement(parseTemp: inout ParseTemp) {
-        if parseTemp.builderLen == 0 {
-            return // no string to append
-        }
-        let count = parseTemp.tempLists.count
-        let attributed = asNSAttributedString(parseTemp: &parseTemp, font: config.fontDefault)
-        clearBuilder(parseTemp: &parseTemp)
-        parseTemp.tempLists[count - 1].children.append(.init(attributed: attributed))
-    }
-
+    
     /// Adds or removes a style. The ranges are marked so the attributed string can be built later.
     private func handleStyle(at: inout Int, len: Int, chars: Array<Character>, styleFlag: TagStyle, parseTemp: inout ParseTemp) {
         if parseTemp.currentStyling.contains(styleFlag) {
@@ -340,18 +320,6 @@ extension SnudownParser {
         }
 
         at += 1
-    }
-
-    /// Pop the current builder as either a block-quote or as a regular NSAttributedString component.
-    private func popCurrentBuilder(parseTemp: inout ParseTemp, font: NSFont) {
-        let attributed = asNSAttributedString(parseTemp: &parseTemp, font: font)
-        clearBuilder(parseTemp: &parseTemp)
-
-        if parseTemp.blockQuoteDepth > 0 {
-            parseTemp.blockQuoteFragments.append(attributed)
-        } else {
-            parseTemp.result.components.append(.text(attributed))
-        }
     }
 
     /// Helper function to clear the builder.
@@ -407,6 +375,41 @@ extension SnudownParser {
         }
 
         return mutable
+    }
+}
+
+// MARK: - Helper functions to add components to the current parse result
+extension SnudownParser {
+    /// Pops the current builder as a quote block
+    private func popCurrentAsBlockQuoteElement(parseTemp: inout ParseTemp) {
+        guard parseTemp.blockQuoteFragments.count > 0 else {
+            return
+        }
+
+        parseTemp.result.components.append(.blockquote(parseTemp.blockQuoteFragments, parseTemp.blockQuoteDepth))
+    }
+
+    /// Pops the current as a list tree
+    private func popCurrentAsListElement(parseTemp: inout ParseTemp) {
+        if parseTemp.builderLen == 0 {
+            return // no string to append
+        }
+        let count = parseTemp.tempLists.count
+        let attributed = asNSAttributedString(parseTemp: &parseTemp, font: config.fontDefault)
+        clearBuilder(parseTemp: &parseTemp)
+        parseTemp.tempLists[count - 1].children.append(.init(attributed: attributed))
+    }
+
+    /// Pop the current builder as either a block-quote or as a regular NSAttributedString component.
+    private func popCurrentBuilder(parseTemp: inout ParseTemp, font: NSFont) {
+        let attributed = asNSAttributedString(parseTemp: &parseTemp, font: font)
+        clearBuilder(parseTemp: &parseTemp)
+
+        if parseTemp.blockQuoteDepth > 0 {
+            parseTemp.blockQuoteFragments.append(attributed)
+        } else {
+            parseTemp.result.components.append(.text(attributed))
+        }
     }
 }
 
