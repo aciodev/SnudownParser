@@ -102,7 +102,9 @@ public class SnudownParser {
 // MARK: - Core parser
 
 extension SnudownParser {
-    /// Parse html
+    /// Parse html and return a ParseResult. This struct returns the components inorder.
+    /// For example, a text component and then a table. Additional information is available,
+    /// such as links.
     public func parse(html: String) -> ParseResult {
         let chars = Array<Character>(html)
         var i = 0
@@ -139,6 +141,8 @@ extension SnudownParser {
         return parseTemp.result
     }
 
+    /// Replaces all html entities with a valid substitution.
+    /// e.g. &#39; to '
     private func handleHtmlEntity(at: inout Int, len: Int, chars: Array<Character>, parseTemp: inout ParseTemp) {
         let htmlEntity = findHtmlEntity(at: &at, len: len, chars: chars)
         let substitution = replacements[htmlEntity] ?? htmlEntity
@@ -146,6 +150,8 @@ extension SnudownParser {
         parseTemp.builderLen += substitution.count
     }
 
+    /// Extracts a link from an <a> tag, and logs the occurrence.
+    /// Also extracts an inline image if embedded in the <a> tag.
     private func handleLinkOrInlineImage(at: inout Int, len: Int, chars: Array<Character>, parseTemp: inout ParseTemp) {
         let linkProperties = extractProps(at: &at, len: len, chars: chars)
         parseTemp.markedIndex = parseTemp.builderLen
@@ -171,6 +177,7 @@ extension SnudownParser {
         }
     }
 
+    /// Extracts a code block
     private func handleCodeBlock(at: inout Int, len: Int, chars: Array<Character>, parseTemp: inout ParseTemp) {
         // Skip <code>
         skip(numTags: 1, at: &at, len: len, chars: chars)
@@ -200,6 +207,9 @@ extension SnudownParser {
         parseTemp.result.components.append(.code(codeString))
     }
 
+    /// This is where most of the magic happens. HTML tags can have various actions. This function takes the associated TagAction
+    /// and performs them. There can be a lot of shared functionality for various tags. One major benefit of this is we can represent
+    /// a dozen+ overlapping behaviors using bit-masking, rather than a huge switch or a billion callbacks.
     private func handleTag(actions: TagAction, at: inout Int, len: Int, chars: Array<Character>, parseTemp: inout ParseTemp) {
         if actions.contains(.allowAppend) {
             parseTemp.allowAppend = true
@@ -283,6 +293,7 @@ extension SnudownParser {
         }
     }
 
+    /// Pops the current builder as a quote block
     private func popCurrentAsBlockQuoteElement(parseTemp: inout ParseTemp) {
         guard parseTemp.blockQuoteFragments.count > 0 else {
             return
@@ -291,6 +302,7 @@ extension SnudownParser {
         parseTemp.result.components.append(.blockquote(parseTemp.blockQuoteFragments, parseTemp.blockQuoteDepth))
     }
 
+    /// Pops the current as a list tree
     private func popCurrentAsListElement(parseTemp: inout ParseTemp) {
         if parseTemp.builderLen == 0 {
             return // no string to append
@@ -301,6 +313,7 @@ extension SnudownParser {
         parseTemp.tempLists[count - 1].children.append(.init(attributed: attributed))
     }
 
+    /// Adds or removes a style. The ranges are marked so the attributed string can be built later.
     private func handleStyle(at: inout Int, len: Int, chars: Array<Character>, styleFlag: TagStyle, parseTemp: inout ParseTemp) {
         if parseTemp.currentStyling.contains(styleFlag) {
             let range = NSRange(location: parseTemp.currentStyleStart, length: parseTemp.builderLen - parseTemp.currentStyleStart)
@@ -318,6 +331,7 @@ extension SnudownParser {
         }
     }
 
+    /// Append a character to the current builder only if building is allowed. Advance the pivot regardless.
     private func handleAppend(at: inout Int, len: Int, chars: Array<Character>, parseTemp: inout ParseTemp) {
         // If outside of tag range, try to build a string
         if parseTemp.allowAppend {
@@ -328,6 +342,7 @@ extension SnudownParser {
         at += 1
     }
 
+    /// Pop the current builder as either a block-quote or as a regular NSAttributedString component.
     private func popCurrentBuilder(parseTemp: inout ParseTemp, font: NSFont) {
         let attributed = asNSAttributedString(parseTemp: &parseTemp, font: font)
         clearBuilder(parseTemp: &parseTemp)
@@ -339,6 +354,7 @@ extension SnudownParser {
         }
     }
 
+    /// Helper function to clear the builder.
     private func clearBuilder(parseTemp: inout ParseTemp) {
         parseTemp.builder = ""
         parseTemp.builderLen = 0
