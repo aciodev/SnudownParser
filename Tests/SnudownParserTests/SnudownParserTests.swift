@@ -86,4 +86,31 @@ final class SnudownParserTests: XCTestCase {
         XCTAssertEqual(list.children[1].attributed.string, "Element two")
         XCTAssertEqual(list.children[1].list?.children[0].attributed.string, "My code")
     }
+    
+    /// Test inline image
+    func testInlineImage() throws {
+        let inlineGifHtml = """
+                            <div class=\"md\"><p>Checkout this gif</p>\n\n<p><a href=\"https://giphy.com/gifs/dBtaWT47wxrgdaa6Qi\" target=\"_blank\"><img src=\"https://external-preview.redd.it/Eh8TOTXX-gHU_sopgEBU_XyvkKmj1yjXxDjoDJh8Yto.gif?width=168&height=200&v=enabled&s=4663d08441abfe1fb3405534f9cf4508cc1225b7\" width=\"168\" height=\"200\"></a></p>\n</div>
+                            """
+        
+        let parser = SnudownParserTests.makeParser()
+        let parseResult = parser.parse(html: inlineGifHtml)
+        let components = parseResult.components
+        
+        XCTAssertEqual(components.count, 3)
+        
+        if case MarkdownComponent.text(let text) = components[0] {
+            XCTAssertEqual(text.string, "Checkout this gif")
+        } else {
+            XCTFail("Element was not text")
+        }
+        
+        if case MarkdownComponent.image(let url, let size) = components[1] {
+            XCTAssertEqual(url.description, "https://external-preview.redd.it/Eh8TOTXX-gHU_sopgEBU_XyvkKmj1yjXxDjoDJh8Yto.gif?width=168&height=200&v=enabled&s=4663d08441abfe1fb3405534f9cf4508cc1225b7")
+            XCTAssertEqual(Int(size.width), 168)
+            XCTAssertEqual(Int(size.height), 200)
+        } else {
+            XCTFail("Component was not in-line image")
+        }
+    }
 }
